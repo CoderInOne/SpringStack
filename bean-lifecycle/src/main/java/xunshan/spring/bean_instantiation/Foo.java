@@ -1,10 +1,10 @@
-package xunshan.spring;
+package xunshan.spring.bean_instantiation;
 
 public class Foo {
 	String a;
 	int b;
 
-	String foo() {
+	public String foo() {
 		return a;
 	}
 

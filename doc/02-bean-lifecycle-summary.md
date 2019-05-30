@@ -186,14 +186,14 @@ public class YmlApplicationContext extends AbstractRefreshableConfigApplicationC
 		GenericBeanDefinition bdf = new GenericBeanDefinition();
 		bdf.setScope(ConfigurableBeanFactory.SCOPE_SINGLETON);
 		bdf.setBeanClass(Foo.class);
-		bdf.setBeanClassName("xunshan.spring.Foo");
+		bdf.setBeanClassName("xunshan.spring.bean_instantiation.Foo");
 		bdf.setFactoryBeanName(null);
 		bdf.getPropertyValues().add("a", "foo");
 		list.add(bdf);
 
 		bdf = new GenericBeanDefinition();
 		bdf.setScope(ConfigurableBeanFactory.SCOPE_SINGLETON);
-		bdf.setBeanClassName("xunshan.spring.TestConfig");
+		bdf.setBeanClassName("xunshan.spring.bean_instantiation.TestConfig");
 		list.add(bdf);
 
 		return list;
@@ -203,7 +203,7 @@ public class YmlApplicationContext extends AbstractRefreshableConfigApplicationC
 // 测试代码
 YmlApplicationContext appCtx = new YmlApplicationContext();
 appCtx.refresh();
-Foo foo = (Foo) appCtx.getBean("xunshan.spring.Foo");
+Foo foo = (Foo) appCtx.getBean("xunshan.spring.bean_instantiation.Foo");
 assertNotNull(foo);
 assertEquals("foo", foo.foo());
 ```
@@ -228,3 +228,15 @@ TODO: 解析文本与结构化信息
 ~AbstractApplicationContext.getBeanNamesForType(java.lang.Class<?>, boolean, boolean)
 加载特定类型的Bean
 ```
+
+## Bean的注入和连线
+
+~populateBean这个方法负责"填充"创建好的Bean中的属性，调用后处理器完成的
+其中postProcessPropertyValues:372, AutowiredAnnotationBeanPostProcessor专门处理属性的注入
+取出注入的元数据：InjectionMetadata
+如果属性还没有实例化，则先去autowireByName这里实例化
+
+AbstractAutowireCapableBeanFactory#postProcessPropertyValues在InjectToObject实例化后，
+会调用这个方法，scan字段和方法，@Autowired会被处理注入
+
+扫描@Autowired注解->解析注解元数据，方法名/字段名/方法参数->BeanFactory解决依赖->调用反射方法

@@ -1,4 +1,4 @@
-package xunshan.spring;
+package xunshan.spring.bean_instantiation;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ComponentScan
 public class TestConfig {
-	class Pojo {
+	public class Pojo {
 		String a = "a";
 	}
 
