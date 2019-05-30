@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.PostConstruct;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -14,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 public class TestConfigTest {
 	@Autowired
 	private TestConfig.Pojo pojo;
+
 
 	@Test
 	public void pojo() {

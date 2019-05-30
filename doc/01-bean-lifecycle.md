@@ -49,66 +49,56 @@ public class TestConfigTest {
 Spring有XML和注解方式，那么Loader就是用来读取配置，并创建上下文的。大家可以先看下loadContext的注释，一开始云里雾里，没有关系，
 咋们继续往下走。
 
-```
-<li>Calls {@link #validateMergedContextConfiguration(MergedContextConfiguration)}
-	 * to allow subclasses to validate the supplied configuration before proceeding.</li>
-	 * <li>Creates a {@link GenericApplicationContext} instance.</li>
-	 * <li>If the supplied {@code MergedContextConfiguration} references a
-	 * {@linkplain MergedContextConfiguration#getParent() parent configuration},
-	 * the corresponding {@link MergedContextConfiguration#getParentApplicationContext()
-	 * ApplicationContext} will be retrieved and
-	 * {@linkplain GenericApplicationContext#setParent(ApplicationContext) set as the parent}
-	 * for the context created by this method.</li>
-	 * <li>Calls {@link #prepareContext(GenericApplicationContext)} for backwards
-	 * compatibility with the {@link org.springframework.test.context.ContextLoader
-	 * ContextLoader} SPI.</li>
-	 * <li>Calls {@link #prepareContext(ConfigurableApplicationContext, MergedContextConfiguration)}
-	 * to allow for customizing the context before bean definitions are loaded.</li>
-	 * <li>Calls {@link #customizeBeanFactory(DefaultListableBeanFactory)} to allow for customizing the
-	 * context's {@code DefaultListableBeanFactory}.</li>
-	 * <li>Delegates to {@link #loadBeanDefinitions(GenericApplicationContext, MergedContextConfiguration)}
-	 * to populate the context from the locations or classes in the supplied
-	 * {@code MergedContextConfiguration}.</li>
-	 * <li>Delegates to {@link AnnotationConfigUtils} for
-	 * {@link AnnotationConfigUtils#registerAnnotationConfigProcessors registering}
-	 * annotation configuration processors.</li>
-	 * <li>Calls {@link #customizeContext(GenericApplicationContext)} to allow for customizing the context
-	 * before it is refreshed.</li>
-	 * <li>Calls {@link #customizeContext(ConfigurableApplicationContext, MergedContextConfiguration)} to
-	 * allow for customizing the context before it is refreshed.</li>
-	 * <li>{@link ConfigurableApplicationContext#refresh Refreshes} the
-	 * context and registers a JVM shutdown hook for it.</li>
-```
-
 接下来，我们看到`org.springframework.context.ConfigurableApplicationContext.refresh`这个"传奇"方法，哈哈
 
 ```
-// 首先创建Bean
+// 入口方法refresh
+1. 从文件或者网络刷新配置
+2. 销毁旧的bean，
 
 // 准备：校验validateRequiredProperties
 prepareRefresh
 
 // 回调子类刷新，把当前的各类依赖注册到子类的BeanFactory中
 refreshBeanFactory
+~refreshBeanFactory: 方法的注释并不直观：Subclasses must implement this method to perform the actual configuration load
+                     简单的讲，就是你的子类BeanFactory要自己去实现刷新配置，如XML
+~loadBeanDefinitions: 解析元数据，注册Bean定义
 
 // 这里的一大段主要是初始化Context和BeanFactory
+
+// PostProcessor，Bean创建后处理器，鲜明例子是ApplicationContextAware接口，只要实现了这个接口的Bean一旦
+// 创建后，就会先注入上下文，这里实现了一个很有意思的东西，BeanFactoryAware只要实现了这个接口，容器会在创建成功后
+// 把BeanFactory注入进去。因为是启动，先处理BeanFactory的后处理器
+// BeanFactory有对应的PostProcessor，这些处理器是针对每个Bean而言的，所以一开始就必须初始化了
 // Allows post-processing of the bean factory in context subclasses.
 postProcessBeanFactory(beanFactory);
 // Invoke factory processors registered as beans in the context.
 invokeBeanFactoryPostProcessors(beanFactory);
 // Register bean processors that intercept bean creation.
 registerBeanPostProcessors(beanFactory);
+// 高屋建瓴的总结：https://stackoverflow.com/questions/29743320/how-exactly-does-the-spring-beanpostprocessor-work
+
 // Initialize message source for this context.
+// 国际化
 initMessageSource();
+
 // Initialize event multicaster for this context.
+// 事件机制，如cronJob。这篇文章总结地好：https://www.baeldung.com/spring-events
+// 会在registerListeners()这里注册监听
 initApplicationEventMulticaster();
+
 // Initialize other special beans in specific context subclasses.
 onRefresh();
+
 // Check for listener beans and register them.
 registerListeners();
+
 // Instantiate all remaining (non-lazy-init) singletons.
 finishBeanFactoryInitialization(beanFactory);
+
 // Last step: publish corresponding event.
+// 发布事件
 finishRefresh();
 
 // 开始创建bean了
@@ -232,4 +222,9 @@ org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiat
 
 ConstrutorResolver 419行，为什么要取FactoryBean，即TestConfig的所有方法呢？candidates是候选，最终会选举一个factoryMethodToUse，为什么
 不是直接取呢？
+
+TODO: 解析文本与结构化信息
+
+~AbstractApplicationContext.getBeanNamesForType(java.lang.Class<?>, boolean, boolean)
+加载特定类型的Bean
 ```
