@@ -2,6 +2,7 @@ package xunshan.spring.bean_instantiation;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ import javax.annotation.PostConstruct;
 @ComponentScan
 public class TestConfig {
 	public class Pojo {
-		String a = "a";
+		public String a = "a";
 	}
 
 	@Bean
@@ -29,5 +30,12 @@ public class TestConfig {
 	@Bean
 	Pojo pojo() {
 		return new Pojo();
+	}
+
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext appCtx =
+				new AnnotationConfigApplicationContext(TestConfig.class);
+		Pojo pojo = (Pojo) appCtx.getBean("pojo");
+		System.out.println(pojo.a);
 	}
 }
