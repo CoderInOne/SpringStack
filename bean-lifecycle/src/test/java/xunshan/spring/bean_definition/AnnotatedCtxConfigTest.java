@@ -22,10 +22,10 @@ public class AnnotatedCtxConfigTest {
 		AnnotatedBeanDefinitionReader bdfReader =
 				new AnnotatedBeanDefinitionReader(appCtx.getDefaultListableBeanFactory());
 		assertNotNull(bdfReader);
-		bdfReader.registerBean(AnnotatedPojo.class, "pojo");
+		bdfReader.registerBean(AnnotatedPojo.class, "createPojoByFactoryMethod");
 
 		// check bean definition whether match annotation metadata
-		BeanDefinition bdf = bdfReader.getRegistry().getBeanDefinition("pojo");
+		BeanDefinition bdf = bdfReader.getRegistry().getBeanDefinition("createPojoByFactoryMethod");
 		assertNotNull(bdf);
 		assertEquals("xunshan.spring.bean_definition.AnnotatedPojo",
 				     bdf.getBeanClassName());
