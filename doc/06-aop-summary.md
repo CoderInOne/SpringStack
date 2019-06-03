@@ -24,7 +24,73 @@
 - 切面（Aspect）
 - 增强（Advice）
 - 切点（Pointcut）
+- 连接点（JointPoint）
 
 使用的知识点：
 
 - byte code
+
+## 示例：输出方法调用日志
+
+定义两个类，要求对方法的执行前后进行日志的输出：
+
+```
+@Component
+public class BizOne {
+	public void doOneAction() {
+		System.out.println("action one");
+	}
+}
+
+@Component
+public class BizTwo {
+	public void doTwoAction() {
+		System.out.println("action two");
+	}
+}
+```
+
+这里涉及到有个概念叫：JointPoint，连接点，一般指的是一个方法的执行，这里是`doOneAction`和`BizTwo`这两个方法。把方法抽象成一个点，方便在上面
+展开逻辑，这种方法和在物理上点的抽象有异曲同工之妙。
+
+我们看下如下表述：
+
+- 仅对`doOneAction`方法输出日志
+
+因为方法有很多，怎么样只对`doOneAction`方法实现日志输出呢？我们很快想到正则匹配。这种正则匹配在AOP中叫做：Pointcut。意思是说
+符合正则表达式的地方切下一个口，来执行我的日志逻辑。实现如下：
+
+```
+@Component
+@Aspect
+public class LogAspect {
+	@Around("execution(* xunshan.spring.BizOne.*()") // <- PointCut
+	public Object doLogOnTargetMethod(ProceedingJoinPoint pjp  // <- JointPoint
+	    ) throws Throwable {
+		// 方法前输出日志
+		System.out.printf("[%s] [%s]\n", pjp, "before");
+
+		// 执行真正的逻辑
+		Object result = pjp.proceed();
+
+		// 方法后输出日志
+		System.out.printf("[%s] [%s]\n", pjp, "finished");
+
+		return result;
+	}
+}
+```
+
+PointCut: `execution(* xunshan.spring.BizOne.*(..))`解析
+
+- execution代表匹配方法的JoinPoint，也就是方法的拦截
+- `public void xunshan.spring.BizOne.*()`表示BizOne中的任何方法
+
+对PointCut之前执行，之后执行又是怎么定义的呢？首先看@Around，表示在这个方法前后执行某个操作，这种叫做Advice，在上面的例子中Advice的操作
+就是`doLogOnTargetMethod`。Advice一般有：
+
+- Before: 在JoinPoint之前
+- After： 在JoinPoint之后
+- Around：在JoinPoint前后
+- AfterThrowing: 在JoinPoint抛异常之后
+

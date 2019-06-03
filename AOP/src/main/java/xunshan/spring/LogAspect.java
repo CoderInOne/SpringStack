@@ -1,6 +1,8 @@
 package xunshan.spring;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -11,27 +13,31 @@ import java.util.Date;
 @Component
 @Aspect
 public class LogAspect {
-	@Pointcut("execution(public void *(..))")
-	private void targetMethod() {
-	}
+	@Pointcut("within(xunshan.spring.*)")
+	void executionPointCut() { }
 
-	@Around("targetMethod()")
+	@Pointcut("within(xunshan.spring.*)")
+	void onWithinBlock() { }
+
+	@Around("executionPointCut()")
 	public Object doLogOnTargetMethod(ProceedingJoinPoint pjp) throws Throwable {
-		if (pjp == null) {
-			return null;
-		}
+		// 方法前输出日志
+		System.out.printf("[%s] [%s]\n", pjp, "before");
 
-		System.out.printf("[%s] [%s] [%s] [%s]\n",
-				"Thread:" + Thread.currentThread().getName(),
-				new Date(System.currentTimeMillis()).toString(),
-				pjp,
-				"before");
-
+		// 执行真正的逻辑
 		Object result = pjp.proceed();
 
-		System.out.printf("%s %s %s %s\n", new Date(System.currentTimeMillis()).toString()
-				, pjp, Thread.currentThread().getName(), "finished");
+		// 方法后输出日志
+		System.out.printf("[%s] [%s]\n", pjp, "finished");
 
 		return result;
+	}
+
+	@AfterThrowing(value = "executionPointCut()", throwing = "e")
+	public void doOnExceptionThrowing(JoinPoint pjp, Throwable e) {
+		System.out.println("doOnExceptionThrowing");
+
+		// swallow exception for test
+		// e.printStackTrace();
 	}
 }

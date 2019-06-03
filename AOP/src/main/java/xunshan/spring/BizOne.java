@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class BizOne {
 	@Log
 	public void doOneAction() {
-		System.out.println("action one");
+		System.out.println("do action one");
 	}
 }
