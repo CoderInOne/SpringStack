@@ -1,22 +1,18 @@
-# 玩转Spring技术栈
+# 准备一个高效的学习方法
 
-本项目旨在彻底，深入地学习Spring技术栈。在当今Java世界中，使用Spring框架作为基础的项目已经数不胜数，
-Spring经过十几年的发展，积累了很多的宝贵经验和最佳实践，我们没有理由不深入学习它。
+我的目的只有一个：让每个知识点的学习流程化。我的学习步骤很简单：
 
-## 核心内容
+1. 提出问题，如Bean的定义如何加载
+2. 写个简单的单元测试，见feature-bean-lifecycle分支的xunshan.spring.bean_definition包路径
+3. 三件套：代码追查，debug，针对性测试
+4. 总结与讨论
+5. 有反馈，则回到1
 
-- 基础概念与原理，如`IOC`，`AOP`，`MVC`等
-- 源代码分析
-- 进阶主题：SpringBoot，SpringCloud，ReactiveFramework
-- 高级特性：如何定制注解，中间件如何整合Spring
+流程化，即时反馈，分割问题这是我最喜爱的学习方式。流程化使得效率提高。即时反馈要求我写更多的代码，如果
+我觉得这里不懂，我就尝试去写个单元测试，在写的过程中，报错/反复读文档和代码，这些让我受益良多。单元测试
+总是会逼迫我们去分解问题，分解系统，没什么方式比这种更好地理解系统了。
 
-## How to
-
-本项目主要采用单元测试的办法去实践Spring中的每个单元。原因有下：
-
-- 单元化：每个部分独立出来，研究它，把玩它，才能更好其吸收特性
-- Spring启动比较耗时，而单独写个测试类，只加载特定的Configuration，大大减少启动时间。记住：反馈越快，效果越好
-- Spring日志输出较多，咋们不要把时间浪费在找日志上面，直接用断言，能达到同样的验证效果
+接下来，说下我的做法。
 
 ### 基本分支
 
@@ -104,7 +100,7 @@ public class TestConfigTest {
 
 - checkout到base分支: `git checkout base`
 - 创建分支：`git checkout -b feature-bean-lifecycle`
-- 开始编码，详细见本项目`feature-bean-lifecycle`分支
+- 开始编写单元测试，详细见本项目`feature-bean-lifecycle`分支
 - 研究完成，合并分支到master: `git checkout master && git merge feature-bean-lifecycle`
 - 记录新的，分享收获
 
