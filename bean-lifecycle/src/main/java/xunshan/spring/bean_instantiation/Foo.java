@@ -4,6 +4,10 @@ public class Foo {
 	String a;
 	int b;
 
+	public Foo() {
+		System.out.println("init foo");
+	}
+
 	public String foo() {
 		return a;
 	}

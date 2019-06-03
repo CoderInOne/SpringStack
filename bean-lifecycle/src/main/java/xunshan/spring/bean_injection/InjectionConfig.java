@@ -1,4 +1,4 @@
-package xunshan.spring.injection;
+package xunshan.spring.bean_injection;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

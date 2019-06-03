@@ -1,4 +1,4 @@
-package xunshan.spring.injection;
+package xunshan.spring.bean_injection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,20 +15,17 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = InjectionConfig.class)
 public class InjectionConfigTest {
 	@Autowired
-	private InjectToObject injectToObject;
+	private SetterInjection injectToObject;
 	@Autowired
-	private ConfigurableApplicationContext appCtx;
+	private ConstructorInjection constructorInjection;
 
 	@Test
-	public void injectFooToObject_Success() {
+	public void injectBySetter() {
 		assertNotNull(injectToObject.getFoo());
 	}
 
 	@Test
-	public void getInjectToObjectBeanDefinition() {
-		BeanDefinition bdf = appCtx.getBeanFactory().getBeanDefinition("injectToObject");
-		System.out.println(bdf);
-		MutablePropertyValues pvs = bdf.getPropertyValues();
-		System.out.println(pvs.getPropertyValueList());
+	public void injectByConstructor() {
+		assertNotNull(constructorInjection.getFoo());
 	}
 }
