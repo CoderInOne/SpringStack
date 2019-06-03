@@ -6,7 +6,11 @@
 
     <groupId>xunshan.spring</groupId>
     <artifactId>SpringStack</artifactId>
+    <packaging>pom</packaging>
     <version>1</version>
+    <modules>
+        <module>AOP</module>
+    </modules>
 
     <properties>
         <spring-base>5.0.8.RELEASE</spring-base>
