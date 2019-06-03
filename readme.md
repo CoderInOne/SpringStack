@@ -6,7 +6,7 @@ Spring经过十几年的发展，积累了很多的宝贵经验和最佳实践�
 ## 核心内容
 
 - 基础概念与原理，如`IOC`，`AOP`，`MVC`等
-- 源代码分析
+- 源代码分析，针对性单元测试
 - 进阶主题：SpringBoot，SpringCloud，ReactiveFramework
 - 高级特性：如何定制注解，中间件如何整合Spring
 
