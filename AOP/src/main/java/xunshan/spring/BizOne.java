@@ -8,4 +8,8 @@ public class BizOne {
 	public void doOneAction() {
 		System.out.println("do action one");
 	}
+
+	public void doThrowEx() {
+		throw new RuntimeException("ops");
+	}
 }

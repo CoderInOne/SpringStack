@@ -27,7 +27,7 @@ public class LogConfigTest {
 		LogAspect l = Mockito.spy(logAspect);
 
 		bizOne.doOneAction();
-		bizTwo.doTwoAction();
+		bizOne.doThrowEx();
 
 		// verify(l.doLogOnTargetMethod(any(ProceedingJoinPoint.class)), times(2));
 	}

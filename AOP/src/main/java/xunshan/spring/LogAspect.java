@@ -16,10 +16,13 @@ public class LogAspect {
 	@Pointcut("within(xunshan.spring.*)")
 	void executionPointCut() { }
 
+	@Pointcut("execution(* xunshan.spring.BizOne.*())")
+	void executionMethodInBizOne() { }
+
 	@Pointcut("within(xunshan.spring.*)")
 	void onWithinBlock() { }
 
-	@Around("executionPointCut()")
+	@Around("executionMethodInBizOne()")
 	public Object doLogOnTargetMethod(ProceedingJoinPoint pjp) throws Throwable {
 		// 方法前输出日志
 		System.out.printf("[%s] [%s]\n", pjp, "before");
@@ -33,7 +36,7 @@ public class LogAspect {
 		return result;
 	}
 
-	@AfterThrowing(value = "executionPointCut()", throwing = "e")
+	@AfterThrowing(value = "executionMethodInBizOne()", throwing = "e")
 	public void doOnExceptionThrowing(JoinPoint pjp, Throwable e) {
 		System.out.println("doOnExceptionThrowing");
 

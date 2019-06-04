@@ -37,8 +37,13 @@
 ```
 @Component
 public class BizOne {
+	@Log
 	public void doOneAction() {
-		System.out.println("action one");
+		System.out.println("do action one");
+	}
+
+	public void doThrowEx() {
+		throw new RuntimeException("ops");
 	}
 }
 
@@ -94,3 +99,41 @@ PointCut: `execution(* xunshan.spring.BizOne.*(..))`解析
 - Around：在JoinPoint前后
 - AfterThrowing: 在JoinPoint抛异常之后
 
+接下来，我想在排除异常的时候也加进去：
+
+```
+@AfterThrowing(value = "execution(* xunshan.spring.BizOne.*())", throwing = "e")
+public void doOnExceptionThrowing(JoinPoint pjp, Throwable e) {
+    System.out.println("doOnExceptionThrowing");
+}
+```
+
+由于`doLogOnTargetMethod`和`doOnExceptionThrowing`这两个PointCut是同一个，不妨把他们放到一起：
+
+```
+@Component
+@Aspect
+public class LogAspect {
+	@Pointcut("execution(* xunshan.spring.BizOne.*())")
+	void executionMethodInBizOne() { }
+
+	@Around("executionMethodInBizOne()")
+	public Object doLogOnTargetMethod(ProceedingJoinPoint pjp) throws Throwable {
+		...
+	}
+
+	@AfterThrowing(value = "executionMethodInBizOne()", throwing = "e")
+	public void doOnExceptionThrowing(JoinPoint pjp, Throwable e) {
+		...
+	}
+}
+```
+
+这里`doLogOnTargetMethod`和`doOnExceptionThrowing`两个Advice组成的组件叫做Aspect。综上所述，AOP的编程步骤可以归纳为：
+
+1. 确定关注点，如日志输出
+2. 定义PointCut表达式
+3. 确定Advice，如Around，Before等
+4. 整理成Aspect
+
+## TODO 源代码实现
