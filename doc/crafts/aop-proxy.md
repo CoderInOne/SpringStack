@@ -44,5 +44,21 @@ public class MyMethodInterceptor implements MethodInterceptor {
 这里需要这一的是Advise以CGLib的callback方式注册，可能多于一个。CGLib的callback类似于JDK代理的InvokeHandler，
 比起InvokeHandler更容易使用，InvokeHandler处理不当会造成死循环。
 
+## CGLib vs JDK proxy
+
+JDK:
+
+- 只代理接口，可代理多个接口
+- 所有方法代理到InvocationHandler接口
+- 性能：所有方法代理到统一接口，需要进一步转发，有性能的损耗，toString/clone这类方法，通常不需要改写
+
+CGLib:
+
+- 以子类形式代理，不支持final方法和类
+- 停止开发
+- 性能：指定对某个方法注入byte code，减少方法转发
+
+方法转发的意思说每个方法有个index，调用的时候用这个index去virtual method table查找实现。
+
 [1]: https://github.com/iluwatar/java-design-patterns/tree/master/proxy
 [2]: https://dzone.com/articles/cglib-missing-manual
