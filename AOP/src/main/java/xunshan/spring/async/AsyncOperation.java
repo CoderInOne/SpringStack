@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AsyncOperation {
+	public AsyncOperation() {
+		System.out.println("init async operation");
+	}
+
 	@Async
 	public void doAsyncAction(Runnable r) {
 		System.out.println(Thread.currentThread());
