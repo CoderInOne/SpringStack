@@ -1,4 +1,0 @@
-- MVC模式
-- Adapter模式
-- 代理模式：HandlerMethodReturnValueHandlerComposite
-- FrontController

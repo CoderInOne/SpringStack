@@ -3,16 +3,17 @@ package xunshan.spring;
 import org.apache.catalina.Context;
 import org.apache.catalina.Server;
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.ServletException;
 import java.io.File;
 
-//@SpringBootApplication
-public class MVCApplication  {
-//	public static void main(String[] args) {
-//		SpringApplication.run(MVCApplication.class, args);
-//	}
-
+public class MVCApplication {
 	public static void main(String[] args) throws Exception {
 		Tomcat tomcat = new Tomcat();
 
@@ -25,37 +26,34 @@ public class MVCApplication  {
 		Context context = tomcat.addContext("", docBase.getAbsolutePath());
 
 		addServlet(context);
-		// addFilter(context);
 
 		Server server = tomcat.getServer();
 
-		tomcat.start();
+		tomcat.init();
+		server.start();
 		server.await();
 	}
 
-//	private static void addFilter(Context context) {
-//		Class filterClass = HelloFilter.class;
-//		FilterDef def = new FilterDef();
-//		def.setFilterClass(filterClass.getName());
-//		def.setFilterName(filterClass.getSimpleName());
-//		context.addFilterDef(def);
-//
-//		FilterMap fmap = new FilterMap();
-//		fmap.setFilterName(filterClass.getSimpleName());
-//		fmap.addURLPattern("/hello/*");
-//		context.addFilterMap(fmap);
-//	}
+	private static void addServlet(Context context) throws ServletException {
+		DispatcherServlet servlet = prepareDispatcherServlet();
 
-	private static void addServlet(Context context) {
+		Tomcat.ExistingStandardWrapper wrapper = (Tomcat.ExistingStandardWrapper)
+				Tomcat.addServlet(context, "dispatcher-servlet", servlet);
+		context.addServletMappingDecoded("/hello/*", "dispatcher-servlet");
+		// 预加载
+		wrapper.loadServlet();
+	}
+
+	private static DispatcherServlet prepareDispatcherServlet() {
+		// 启动上下文
 		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
 		ctx.register(Controller.class);
 		ctx.refresh();
 
-		MyDispatcherServlet servlet = new MyDispatcherServlet();
+		DispatcherServlet servlet = new DispatcherServlet();
 		servlet.setApplicationContext(ctx);
-		servlet.refresh(ctx);
-
-		Tomcat.addServlet(context, "dispatcher-servlet", servlet);
-		context.addServletMappingDecoded("/hello/*", "dispatcher-servlet");
+		// onApplicationEvent会调用refresh，同时告诉FrameServlet上下文刷洗完毕，避免重复刷新的问题
+		servlet.onApplicationEvent(new ContextRefreshedEvent(ctx));
+		return servlet;
 	}
 }
