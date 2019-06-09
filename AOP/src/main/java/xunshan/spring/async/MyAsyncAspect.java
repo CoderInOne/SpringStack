@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executor;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class MyAsyncAspect {
 	@Autowired
 	private Executor asyncExecutor;

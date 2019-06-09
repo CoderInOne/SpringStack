@@ -17,11 +17,11 @@ public class AsyncOperation {
 		}
 	}
 
-	@MyAsync
-	public void doMyAsyncAction(Runnable r) {
-		System.out.println(Thread.currentThread());
-		if (r != null) {
-			r.run();
-		}
-	}
+//	@MyAsync
+//	public void doMyAsyncAction(Runnable r) {
+//		System.out.println(Thread.currentThread());
+//		if (r != null) {
+//			r.run();
+//		}
+//	}
 }
