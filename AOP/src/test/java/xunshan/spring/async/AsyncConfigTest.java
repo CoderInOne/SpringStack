@@ -13,16 +13,17 @@ import static org.junit.Assert.assertNotEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AsyncConfig.class)
 public class AsyncConfigTest {
-	@Autowired
-	private AsyncOperation asyncOperation;
+//	@Autowired
+//	private AsyncOperation asyncOperation;
 
 	@Test
 	public void asyncOperation() throws InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		final String curThreadName = Thread.currentThread().getName();
+		AsyncOperation asyncOperation = new AsyncOperation();
 		asyncOperation.doAsyncAction(new Runnable() {
 			public void run() {
-				// 异步执行断言
+				// 当前线程不是main线程，说明doAsyncAction方法是异步执行
 				assertNotEquals(curThreadName, Thread.currentThread().getName());
 
 				latch.countDown();
@@ -31,7 +32,7 @@ public class AsyncConfigTest {
 		latch.await();
 	}
 
-	@Test
+	/*@Test
 	public void myAsyncOperation() throws InterruptedException {
 		int jobs = 20;
 		final CountDownLatch latch = new CountDownLatch(jobs);
@@ -49,5 +50,5 @@ public class AsyncConfigTest {
 		}
 
 		latch.await();
-	}
+	}*/
 }
