@@ -10,4 +10,9 @@ public class Controller {
 	public String hi(@RequestParam("name") String name) {
 		return "hi " + name;
 	}
+
+	@GetMapping("hi/1")
+	public String hiOne(@RequestParam("name") String name) {
+		return "hi " + name;
+	}
 }
