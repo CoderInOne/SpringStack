@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <spring-base>5.0.8.RELEASE</spring-base>
+        <spring-base>5.3.19</spring-base>
     </properties>
 
     <dependencies>
